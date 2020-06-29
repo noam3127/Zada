@@ -9,46 +9,38 @@ export default () => {
     const [navItems, setNavItems] = useState(
         [
             {
-                id: 1, name: "home", dropdownLinks: [{ id: 1, name: "sub1" }, { id: 2, name: "sub2" }, { id: 3, name: "sub3" }]
+                id: 1, name: "home", isDisplayed: false, dropdownLinks: [{ id: 1, name: "sub1" }, { id: 2, name: "sub2" }, { id: 3, name: "sub3" }]
             },
             {
-                id: 2, name: "about", dropdownLinks: [{ id: 1, name: "sub1" }, { id: 2, name: "sub2" }, { id: 3, name: "sub3" }]
+                id: 2, name: "about", isDisplayed: false, dropdownLinks: [{ id: 1, name: "sub1" }, { id: 2, name: "sub2" }, { id: 3, name: "sub3" }]
             }
         ]
     );
 
-    const [showDropdown, setShowDropdown] = useState([]);
-    useEffect(() => {
-        const initDropdown = [];
-
-        navItems.forEach(item => {
-
-            initDropdown[item.id] = false;
-            console.log(initDropdown)
+    const dropdownDisplay = (id, shouldDisplay) => {
+        const items = navItems.map(item => {
+            if (item.id === id) {
+                item.isDisplayed = shouldDisplay;
+            }
+            return item;
         });
-
-        setShowDropdown(initDropdown);
-        console.log(showDropdown)
-
-    }, []);
-
-
-    const dropdownDisplay = (item) => {
-        let newShowDropdown = showDropdown;
-        newShowDropdown[item.id] = !newShowDropdown[item.id];
-        setShowDropdown(newShowDropdown);
-
-    }
+        setNavItems(items);
+    };
 
     return (
         <div id="navContainer">
             <ul id="nav">
 
-                {navItems.map(item => <li key={item.id} onMouseEnter={() => dropdownDisplay(item)}><a>{item.name}</a>
-                    {showDropdown[item.id] ? <Dropdown
-                        links={item.dropdownLinks}
-                    /> : null}
-                </li>)
+                {navItems.map(item =>
+                    <li key={item.id}
+                        onMouseEnter={() => dropdownDisplay(item.id, true)}
+                        onMouseLeave={() => dropdownDisplay(item.id, false)}
+                    >
+                        <a>{item.name}</a>
+                        {item.isDisplayed && <Dropdown
+                            links={item.dropdownLinks}
+                        />}
+                    </li>)
                 }
             </ul>
         </div >
